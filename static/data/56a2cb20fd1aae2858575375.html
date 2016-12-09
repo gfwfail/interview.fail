@@ -1,0 +1,134 @@
+<!DOCTYPE html><html><head><title>Find Minimum in Rotated Sorted Array</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta name="keywords" content="geeksforgeeks, algorithms, iOS"><meta name="apple-itunes-app" content="app-id=991254978"><link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="/stylesheets/main.css"><link rel="stylesheet" href="/stylesheets/styles/github.css"><script src="/javascripts/jquery-1.11.2.js"></script><script src="/bootstrap/js/bootstrap.min.js"></script><script src="/javascripts/highlight.pack.js"></script><script src="/javascripts/geekreader.js"></script><script>hljs.initHighlightingOnLoad();</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67142392-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head><body><div class="container post"><div style="page-break-before:always;" class="post"><div class="post-header"><h1 data-id="56a2cb20fd1aae2858575375" data-set="true" class="title">Find Minimum in Rotated Sorted Array</h1></div><article class="post-content"><div class="question card-content"><div class="question-content">
+              <p></p><p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.</p>
+
+<p>(i.e., <code>0 1 2 4 5 6 7</code> might become <code>4 5 6 7 0 1 2</code>).</p>
+
+<p>Find the minimum element.</p>
+
+<p>You may assume no duplicate exists in the array.</p>
+              
+                
+                  <div>
+                    <div id="company_tags" class="btn btn-xs btn-warning">Show Company Tags</div>
+                    <span class="hidebutton">
+                      
+                        <a class="btn btn-xs btn-primary" href="https://leetcode.com/company/microsoft/">Microsoft</a>
+                      
+                    </span>
+                  </div>
+                
+              
+
+              
+                <div>
+                  <div id="tags" class="btn btn-xs btn-warning">Show Tags</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/array/">Array</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/binary-search/">Binary Search</a>
+                    
+                  </span>
+                </div>
+              
+
+              
+                <div>
+                  <div id="similar" class="btn btn-xs btn-warning">Show Similar Problems</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="#search-in-rotated-sorted-array"> (H) Search in Rotated Sorted Array</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="#find-minimum-in-rotated-sorted-array-ii"> (H) Find Minimum in Rotated Sorted Array II</a>
+                    
+                  </span>
+                </div>
+              
+
+            </div>
+          </div><div style="page-break-before:always;" class="answers"></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 1</h2><div class="answer card-content"><div class="entry-content"><p>Classic binary search problem. </p>
+
+<p>Looking at subarray with index [start,end]. We can find out that if the first member is less than the last member, there's no rotation in the array. So we could directly return the first element in this subarray.</p>
+
+<p>If the first element is larger than the last one, then we compute the element in the middle, and compare it with the first element. If  value of the element in the middle is larger than the first element, we know the rotation is at the second half of this array. Else, it is in the first half in the array.</p>
+
+<p>Welcome to put your comments and suggestions.</p>
+
+<pre><code> int findMin(vector&lt;int&gt; &amp;num) {
+        int start=0,end=num.size()-1;
+
+        while (start&lt;end) {
+            if (num[start]&lt;num[end])
+                return num[start];
+
+            int mid = (start+end)/2;
+
+            if (num[mid]&gt;=num[start]) {
+                start = mid+1;
+            } else {
+                end = mid;
+            }
+        }
+
+        return num[start];
+    }
+</code></pre>
+
+<p>Some corner cases will be discussed  <a rel="nofollow" href="http://changhaz.wordpress.com/2014/10/15/leetcode-find-minimum-in-rotated-sorted-array/">here</a></p>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/changhaz">changhaz</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/13389/compact-and-clean-c-solution">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 2</h2><div class="answer card-content"><div class="entry-content"><p>In this problem, we have only three cases. </p>
+
+<p>Case 1. The leftmost value is less than the rightmost value in the list: This means that the list is not rotated. 
+e.g&gt;  [1 2 3 4 5 6 7 ]</p>
+
+<p>Case 2. The value in the middle of the list is greater than the leftmost and rightmost values in the list. 
+e.g&gt;  [ 4 5 6 7 0 1 2 3 ]</p>
+
+<p>Case 3. The value in the middle of the list is less than the leftmost and rightmost values in the list. 
+e.g&gt;  [ 5 6 7 0 1 2 3 4 ]</p>
+
+<p>As you see in the examples above, if we have case 1, we just return the leftmost value in the list. If we have case 2, we just move to the right side of the list. If we have case 3 we need to move to the left side of the list. </p>
+
+<p>Following is the code that implements the concept described above.</p>
+
+<pre><code>int findMin(vector&lt;int&gt;&amp; nums) {
+    int left = 0,  right = nums.size() - 1;
+    while(left &lt; right) {
+        if(nums[left] &lt; nums[right]) 
+            return nums[left];
+
+        int mid = (left + right)/2;
+        if(nums[mid] &gt; nums[right])
+            left = mid + 1;
+        else
+            right = mid;
+    }
+
+    return nums[left];
+}
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/jaewoo">jaewoo</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/37307/4ms-simple-c-code-with-explanation">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 3</h2><div class="answer card-content"><div class="entry-content"><p>Binary search: basically eliminate the impossible elements by half each time by exploiting the sorted property.</p>
+
+<pre><code>    int findMin(vector&lt;int&gt; &amp;num) {
+        int lo =0, hi = num.size()-1;
+        while(lo&lt;hi){
+              int mid=(lo+hi)/2;
+              if(num[mid]&gt;num[hi]) lo=mid+1;
+              else hi=mid;
+        }
+        return num[lo];
+    }
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/lucastan">lucastan</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/15946/simplest-and-fastest-c-solution-o-lg-n-you-cant-beat-this">here</a></div></div></article></div></div><footer class="footer"><div class="container"><span>From <a href="https://itunes.apple.com/ca/app/leetcoder/id1069760709?mt=8" target='_blank'>Leetcoder</a>.</span></div></footer></body></html>

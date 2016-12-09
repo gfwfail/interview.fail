@@ -1,0 +1,128 @@
+<!DOCTYPE html><html><head><title>Divide Two Integers</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta name="keywords" content="geeksforgeeks, algorithms, iOS"><meta name="apple-itunes-app" content="app-id=991254978"><link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="/stylesheets/main.css"><link rel="stylesheet" href="/stylesheets/styles/github.css"><script src="/javascripts/jquery-1.11.2.js"></script><script src="/bootstrap/js/bootstrap.min.js"></script><script src="/javascripts/highlight.pack.js"></script><script src="/javascripts/geekreader.js"></script><script>hljs.initHighlightingOnLoad();</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67142392-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head><body><div class="container post"><div style="page-break-before:always;" class="post"><div class="post-header"><h1 data-id="56a2cfa2fd1aae28585753f1" data-set="true" class="title">Divide Two Integers</h1></div><article class="post-content"><div class="question card-content"><div class="question-content">
+              <p></p><p>
+Divide two integers without using multiplication, division and mod operator.
+</p>
+<p>
+If it is overflow, return MAX_INT.
+</p>
+              
+                
+              
+
+              
+                <div>
+                  <div id="tags" class="btn btn-xs btn-warning">Show Tags</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/math/">Math</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/binary-search/">Binary Search</a>
+                    
+                  </span>
+                </div>
+              
+
+              
+
+            </div>
+          </div><div style="page-break-before:always;" class="answers"></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 1</h2><div class="answer card-content"><div class="entry-content"><p>In this problem, we are asked to divide two integers. However, we are not allowed to use division, multiplication and mod operations. So, what else can we use? Yeah, bit manipulations.</p>
+
+<p>Let's do an example and see how bit manipulations work.</p>
+
+<p>Suppose we want to divide <code>15</code> by <code>3</code>, so <code>15</code> is <code>dividend</code> and <code>3</code> is <code>divisor</code>. Well, division simply requires us to find how many times we can subtract the <code>divisor</code> from the the <code>dividend</code> without making the <code>dividend</code> negative.</p>
+
+<p>Let's get started. We subtract <code>3</code> from <code>15</code> and we get <code>12</code>, which is positive. Let's try to subtract more. Well, we <strong>shift</strong> <code>3</code> to the left by <code>1</code> bit and we get <code>6</code>. Subtracting <code>6</code> from <code>15</code> still gives a positive result. Well, we shift again and get <code>12</code>. We subtract <code>12</code> from <code>15</code> and it is still positive. We shift again, obtaining <code>24</code> and we know we can at most subtract <code>12</code>. Well, since <code>12</code> is obtained by shifting <code>3</code> to left twice, we know it is <code>4</code> times of <code>3</code>. How do we obtain this <code>4</code>? Well, we start from <code>1</code> and shift it to left twice at the same time. We add <code>4</code> to an answer (initialized to be <code>0</code>). In fact, the above process is like <code>15 = 3 * 4 + 3</code>. We now get part of the quotient (<code>4</code>), with a remainder <code>3</code>.</p>
+
+<p>Then we repeat the above process again. We subtract <code>divisor = 3</code> from the remaining <code>dividend = 3</code> and obtain <code>0</code>. We know we are done. No shift happens, so we simply add <code>1 &lt;&lt; 0</code> to the answer.</p>
+
+<p>Now we have the full algorithm to perform division. </p>
+
+<p>According to the problem statement, we need to handle some exceptions, such as overflow.</p>
+
+<p>Well, two cases may cause overflow:</p>
+
+<ol>
+<li><code>divisor = 0</code>;</li>
+<li><code>dividend = INT_MIN</code> and <code>divisor = -1</code> (because <code>abs(INT_MIN) = INT_MAX + 1</code>).</li>
+</ol>
+
+<p>Of course, we also need to take the sign into considerations, which is relatively easy.</p>
+
+<p>Putting all these together, we have the following code.</p>
+
+<pre><code>class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        if (!divisor || (dividend == INT_MIN &amp;&amp; divisor == -1))
+            return INT_MAX;
+        int sign = ((dividend &lt; 0) ^ (divisor &lt; 0)) ? -1 : 1;
+        long long dvd = labs(dividend);
+        long long dvs = labs(divisor);
+        int res = 0;
+        while (dvd &gt;= dvs) { 
+            long long temp = dvs, multiple = 1;
+            while (dvd &gt;= (temp &lt;&lt; 1)) {
+                temp &lt;&lt;= 1;
+                multiple &lt;&lt;= 1;
+            }
+            dvd -= temp;
+            res += multiple;
+        }
+        return sign == 1 ? res : -res; 
+    }
+};
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/jianchao.li.fighter">jianchao.li.fighter</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/38997/detailed-explained-8ms-c-solution">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 2</h2><div class="answer card-content"><div class="entry-content"><p>Long division in binary:
+The outer loop reduces n by at least half each iteration. So It has O(log N) iterations.
+The inner loop has at most log N iterations. 
+ So  the overall complexity is O(( log N)^2) </p>
+
+<pre><code>typedef long long ll;
+
+int divide(int n_, int d_) {
+    ll ans=0;
+    ll n=abs((ll)n_);
+    ll d=abs((ll)d_);
+    while(n&gt;=d){
+        ll a=d;
+        ll m=1;
+        while((a&lt;&lt;1) &lt; n){a&lt;&lt;=1;m&lt;&lt;=1;}
+        ans+=m;
+        n-=a;
+    }
+    if((n_&lt;0&amp;&amp;d_&gt;=0)||(n_&gt;=0&amp;&amp;d_&lt;0))
+        return -ans;
+    return ans;
+}
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/lucastan">lucastan</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/11358/simple-o-log-n-2-c-solution">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 3</h2><div class="answer card-content"><div class="entry-content"><pre><code>class Solution:
+# @return an integer
+def divide(self, dividend, divisor):
+    positive = (dividend &lt; 0) is (divisor &lt; 0)
+    dividend, divisor = abs(dividend), abs(divisor)
+    res = 0
+    while dividend &gt;= divisor:
+        temp, i = divisor, 1
+        while dividend &gt;= temp:
+            dividend -= temp
+            res += i
+            i &lt;&lt;= 1
+            temp &lt;&lt;= 1
+    if not positive:
+        res = -res
+    return min(max(-2147483648, res), 2147483647)
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/tusizi">tusizi</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/25029/clear-python-code">here</a></div></div></article></div></div><footer class="footer"><div class="container"><span>From <a href="https://itunes.apple.com/ca/app/leetcoder/id1069760709?mt=8" target='_blank'>Leetcoder</a>.</span></div></footer></body></html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html><html><head><title>4Sum</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta name="keywords" content="geeksforgeeks, algorithms, iOS"><meta name="apple-itunes-app" content="app-id=991254978"><link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="/stylesheets/main.css"><link rel="stylesheet" href="/stylesheets/styles/github.css"><script src="/javascripts/jquery-1.11.2.js"></script><script src="/bootstrap/js/bootstrap.min.js"></script><script src="/javascripts/highlight.pack.js"></script><script src="/javascripts/geekreader.js"></script><script>hljs.initHighlightingOnLoad();</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67142392-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head><body><div class="container post"><div style="page-break-before:always;" class="post"><div class="post-header"><h1 data-id="56a2d00dfd1aae28585753fc" data-set="true" class="title">4Sum</h1></div><article class="post-content"><div class="question card-content"><div class="question-content">
+              <p></p><p>Given an array <i>S</i> of <i>n</i> integers, are there elements <i>a</i>, <i>b</i>, <i>c</i>, and <i>d</i> in <i>S</i> such that <i>a</i> + <i>b</i> + <i>c</i> + <i>d</i> = target? Find all unique quadruplets in the array which gives the sum of target.</p>
+
+<p><b>Note:</b><br>
+</p><ul>
+<li>Elements in a quadruplet (<i>a</i>,<i>b</i>,<i>c</i>,<i>d</i>) must be in non-descending order. (ie, <i>a</i> &#8804; <i>b</i> &#8804; <i>c</i> &#8804; <i>d</i>)</li>
+<li>The solution set must not contain duplicate quadruplets.</li>
+</ul>
+
+
+<pre>
+    For example, given array S = {1 0 -1 0 -2 2}, and target = 0.
+
+    A solution set is:
+    (-1,  0, 0, 1)
+    (-2, -1, 1, 2)
+    (-2,  0, 0, 2)
+</pre>
+              
+                
+              
+
+              
+                <div>
+                  <div id="tags" class="btn btn-xs btn-warning">Show Tags</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/array/">Array</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/hash-table/">Hash Table</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/two-pointers/">Two Pointers</a>
+                    
+                  </span>
+                </div>
+              
+
+              
+                <div>
+                  <div id="similar" class="btn btn-xs btn-warning">Show Similar Problems</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="#two-sum"> (M) Two Sum</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="#3sum"> (M) 3Sum</a>
+                    
+                  </span>
+                </div>
+              
+
+            </div>
+          </div><div style="page-break-before:always;" class="answers"></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 1</h2><div class="answer card-content"><div class="entry-content"><p>For the reference, please have a look at my explanation of <code>3Sum</code> problem because the algorithm are exactly the same. The link is as blow.</p>
+
+<p><a rel="nofollow" href="https://oj.leetcode.com/discuss/23595/share-my-solution-around-50ms-with-explanation-and-comments">My 3Sum problem answer</a></p>
+
+<p>The key idea is to downgrade the problem to a <code>2Sum</code> problem eventually. And the same algorithm can be expand to <code>NSum</code> problem.</p>
+
+<p>After you had a look at my explanation of <code>3Sum</code>, the code below will be extremely easy to understand.</p>
+
+<pre><code>class Solution {
+public:
+    vector&lt;vector&lt;int&gt; &gt; fourSum(vector&lt;int&gt; &amp;num, int target) {
+
+        vector&lt;vector&lt;int&gt; &gt; res;
+
+        if (num.empty())
+            return res;
+
+        std::sort(num.begin(),num.end());
+
+        for (int i = 0; i &lt; num.size(); i++) {
+
+            int target_3 = target - num[i];
+
+            for (int j = i + 1; j &lt; num.size(); j++) {
+
+                int target_2 = target_3 - num[j];
+
+                int front = j + 1;
+                int back = num.size() - 1;
+
+                while(front &lt; back) {
+
+                    int two_sum = num[front] + num[back];
+
+                    if (two_sum &lt; target_2) front++;
+
+                    else if (two_sum &gt; target_2) back--;
+
+                    else {
+
+                        vector&lt;int&gt; quadruplet(4, 0);
+                        quadruplet[0] = num[i];
+                        quadruplet[1] = num[j];
+                        quadruplet[2] = num[front];
+                        quadruplet[3] = num[back];
+                        res.push_back(quadruplet);
+
+                        // Processing the duplicates of number 3
+                        while (front &lt; back &amp;&amp; num[front] == quadruplet[2]) ++front;
+
+                        // Processing the duplicates of number 4
+                        while (front &lt; back &amp;&amp; num[back] == quadruplet[3]) --back;
+
+                    }
+                }
+
+                // Processing the duplicates of number 2
+                while(j + 1 &lt; num.size() &amp;&amp; num[j + 1] == num[j]) ++j;
+            }
+
+            // Processing the duplicates of number 1
+            while (i + 1 &lt; num.size() &amp;&amp; num[i + 1] == num[i]) ++i;
+
+        }
+
+        return res;
+
+    }
+};
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/kun3">kun3</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/27198/solution-explanation-comparison-problem-easy-understand">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 2</h2><div class="answer card-content"><div class="entry-content"><pre><code>class Solution {
+public:
+    vector&lt;vector&lt;int&gt;&gt; fourSum(vector&lt;int&gt;&amp; nums, int target) {
+        vector&lt;vector&lt;int&gt;&gt; total;
+        int n = nums.size();
+        if(n&lt;4)  return total;
+        sort(nums.begin(),nums.end());
+        for(int i=0;i&lt;n-3;i++)
+        {
+            if(i&gt;0&amp;&amp;nums[i]==nums[i-1]) continue;
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3]&gt;target) break;
+            if(nums[i]+nums[n-3]+nums[n-2]+nums[n-1]&lt;target) continue;
+            for(int j=i+1;j&lt;n-2;j++)
+            {
+                if(j&gt;i+1&amp;&amp;nums[j]==nums[j-1]) continue;
+                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]&gt;target) break;
+                if(nums[i]+nums[j]+nums[n-2]+nums[n-1]&lt;target) continue;
+                int left=j+1,right=n-1;
+                while(left&lt;right){
+                    int sum=nums[left]+nums[right]+nums[i]+nums[j];
+                    if(sum&lt;target) left++;
+                    else if(sum&gt;target) right--;
+                    else{
+                        total.push_back(vector&lt;int&gt;{nums[i],nums[j],nums[left],nums[right]});
+                        do{left++;}while(nums[left]==nums[left-1]&amp;&amp;left&lt;right);
+                        do{right--;}while(nums[right]==nums[right+1]&amp;&amp;left&lt;right);
+                    }
+                }
+            }
+        }
+        return total;
+    }
+};
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/cx1992">cx1992</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/67417/my-16ms-c-code">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 3</h2><div class="answer card-content"><div class="entry-content"><pre><code>public class Solution {
+    public List&lt;List&lt;Integer&gt;&gt; fourSum(int[] num, int target) {
+        ArrayList&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+        if(num.length&lt;4)return ans;
+        Arrays.sort(num);
+        for(int i=0; i&lt;num.length-3; i++){
+            if(i&gt;0&amp;&amp;num[i]==num[i-1])continue;
+            for(int j=i+1; j&lt;num.length-2; j++){
+                if(j&gt;i+1&amp;&amp;num[j]==num[j-1])continue;
+                int low=j+1, high=num.length-1;
+                while(low&lt;high){
+                    int sum=num[i]+num[j]+num[low]+num[high];
+                    if(sum==target){
+                        ans.add(Arrays.asList(num[i], num[j], num[low], num[high]));
+                        while(low&lt;high&amp;&amp;num[low]==num[low+1])low++;
+                        while(low&lt;high&amp;&amp;num[high]==num[high-1])high--;
+                        low++;
+                        high--;
+                    }
+                    else if(sum&lt;target)low++;
+                    else high--;
+                }
+            }
+        }
+        return ans;
+    }
+}
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/casualhero">casualhero</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/32594/clean-accepted-java-o-n-3-solution-based-on-3sum">here</a></div></div></article></div></div><footer class="footer"><div class="container"><span>From <a href="https://itunes.apple.com/ca/app/leetcoder/id1069760709?mt=8" target='_blank'>Leetcoder</a>.</span></div></footer></body></html>

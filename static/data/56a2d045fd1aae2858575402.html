@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><head><title>Integer to Roman</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta name="keywords" content="geeksforgeeks, algorithms, iOS"><meta name="apple-itunes-app" content="app-id=991254978"><link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="/stylesheets/main.css"><link rel="stylesheet" href="/stylesheets/styles/github.css"><script src="/javascripts/jquery-1.11.2.js"></script><script src="/bootstrap/js/bootstrap.min.js"></script><script src="/javascripts/highlight.pack.js"></script><script src="/javascripts/geekreader.js"></script><script>hljs.initHighlightingOnLoad();</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67142392-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head><body><div class="container post"><div style="page-break-before:always;" class="post"><div class="post-header"><h1 data-id="56a2d045fd1aae2858575402" data-set="true" class="title">Integer to Roman</h1></div><article class="post-content"><div class="question card-content"><div class="question-content">
+              <p></p><p>Given an integer, convert it to a roman numeral.
+</p>
+
+<p>Input is guaranteed to be within the range from 1 to 3999.</p>
+              
+                
+              
+
+              
+                <div>
+                  <div id="tags" class="btn btn-xs btn-warning">Show Tags</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/math/">Math</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/string/">String</a>
+                    
+                  </span>
+                </div>
+              
+
+              
+                <div>
+                  <div id="similar" class="btn btn-xs btn-warning">Show Similar Problems</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="#roman-to-integer"> (E) Roman to Integer</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="#integer-to-english-words"> (M) Integer to English Words</a>
+                    
+                  </span>
+                </div>
+              
+
+            </div>
+          </div><div style="page-break-before:always;" class="answers"></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 1</h2><div class="answer card-content"><div class="entry-content"><pre><code>    public static String intToRoman(int num) {
+        String M[] = {"", "M", "MM", "MMM"};
+        String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
+    }
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/fabrizio3">fabrizio3</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/32626/simple-solution">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 2</h2><div class="answer card-content"><div class="entry-content"><p>Reference:
+http://blog.csdn.net/beiyeqingteng/article/details/8547565</p>
+
+<p>public class Solution {
+    public String intToRoman(int num) {</p>
+
+<pre><code>    int[] values = {1000,900,500,400,100,90,50,40,10,9,5,4,1};
+    String[] strs = {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+
+    StringBuilder sb = new StringBuilder();
+
+    for(int i=0;i&lt;values.length;i++) {
+        while(num &gt;= values[i]) {
+            num -= values[i];
+            sb.append(strs[i]);
+        }
+    }
+    return sb.toString();
+}
+</code></pre>
+
+<p>}</p>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/Lucifer27">Lucifer27</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/49870/my-java-solution-easy-to-understand">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 3</h2><div class="answer card-content"><div class="entry-content"><p>String[] romanPieces={"","I","II","III","IV","V","VI","VII","VIII","IX",
+                        "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+                        "","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+                        "","M","MM","MMM","MMMM"};
+return romanPieces[num/1000+30]+romanPieces[(num/100)%10+20]
+                    +romanPieces[(num/10)%10+10]+romanPieces[num%10];</p>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/bing10">bing10</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/23495/two-lines-can-do-the-job">here</a></div></div></article></div></div><footer class="footer"><div class="container"><span>From <a href="https://itunes.apple.com/ca/app/leetcoder/id1069760709?mt=8" target='_blank'>Leetcoder</a>.</span></div></footer></body></html>

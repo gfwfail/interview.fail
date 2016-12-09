@@ -1,0 +1,211 @@
+<!DOCTYPE html><html><head><title>Substring with Concatenation of All Words</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta name="keywords" content="geeksforgeeks, algorithms, iOS"><meta name="apple-itunes-app" content="app-id=991254978"><link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="/stylesheets/main.css"><link rel="stylesheet" href="/stylesheets/styles/github.css"><script src="/javascripts/jquery-1.11.2.js"></script><script src="/bootstrap/js/bootstrap.min.js"></script><script src="/javascripts/highlight.pack.js"></script><script src="/javascripts/geekreader.js"></script><script>hljs.initHighlightingOnLoad();</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67142392-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head><body><div class="container post"><div style="page-break-before:always;" class="post"><div class="post-header"><h1 data-id="56a2cf98fd1aae28585753f0" data-set="true" class="title">Substring with Concatenation of All Words</h1></div><article class="post-content"><div class="question card-content"><div class="question-content">
+              <p></p><p>
+You are given a string, <b>s</b>, and a list of words, <b>words</b>, that are all of the same length. Find all starting indices of substring(s) in <b>s</b> that is a concatenation of each word in <b>words</b> exactly once and without any intervening characters.
+</p>
+
+<p>
+For example, given:<br>
+<b>s</b>: <code>"barfoothefoobarman"</code><br>
+<b>words</b>: <code>["foo", "bar"]</code>
+</p>
+
+<p>
+You should return the indices: <code>[0,9]</code>.<br>
+(order does not matter).
+</p>
+              
+                
+              
+
+              
+                <div>
+                  <div id="tags" class="btn btn-xs btn-warning">Show Tags</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/hash-table/">Hash Table</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/two-pointers/">Two Pointers</a>
+                    
+                    <a class="btn btn-xs btn-primary" href="https://leetcode.com/tag/string/">String</a>
+                    
+                  </span>
+                </div>
+              
+
+              
+                <div>
+                  <div id="similar" class="btn btn-xs btn-warning">Show Similar Problems</div>
+                  <span class="hidebutton">
+                    
+                    <a class="btn btn-xs btn-primary" href="#minimum-window-substring"> (H) Minimum Window Substring</a>
+                    
+                  </span>
+                </div>
+              
+
+            </div>
+          </div><div style="page-break-before:always;" class="answers"></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 1</h2><div class="answer card-content"><div class="entry-content"><pre><code>    // travel all the words combinations to maintain a window
+    // there are wl(word len) times travel
+    // each time, n/wl words, mostly 2 times travel for each word
+    // one left side of the window, the other right side of the window
+    // so, time complexity O(wl * 2 * N/wl) = O(2N)
+    vector&lt;int&gt; findSubstring(string S, vector&lt;string&gt; &amp;L) {
+        vector&lt;int&gt; ans;
+        int n = S.size(), cnt = L.size();
+        if (n &lt;= 0 || cnt &lt;= 0) return ans;
+
+        // init word occurence
+        unordered_map&lt;string, int&gt; dict;
+        for (int i = 0; i &lt; cnt; ++i) dict[L[i]]++;
+
+        // travel all sub string combinations
+        int wl = L[0].size();
+        for (int i = 0; i &lt; wl; ++i) {
+            int left = i, count = 0;
+            unordered_map&lt;string, int&gt; tdict;
+            for (int j = i; j &lt;= n - wl; j += wl) {
+                string str = S.substr(j, wl);
+                // a valid word, accumulate results
+                if (dict.count(str)) {
+                    tdict[str]++;
+                    if (tdict[str] &lt;= dict[str]) 
+                        count++;
+                    else {
+                        // a more word, advance the window left side possiablly
+                        while (tdict[str] &gt; dict[str]) {
+                            string str1 = S.substr(left, wl);
+                            tdict[str1]--;
+                            if (tdict[str1] &lt; dict[str1]) count--;
+                            left += wl;
+                        }
+                    }
+                    // come to a result
+                    if (count == cnt) {
+                        ans.push_back(left);
+                        // advance one word
+                        tdict[S.substr(left, wl)]--;
+                        count--;
+                        left += wl;
+                    }
+                }
+                // not a valid word, reset all vars
+                else {
+                    tdict.clear();
+                    count = 0;
+                    left = j + wl;
+                }
+            }
+        }
+
+        return ans;
+    }
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/shichaotan">shichaotan</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/20151/an-o-n-solution-with-detailed-explanation">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 2</h2><div class="answer card-content"><div class="entry-content"><pre><code>class Solution {
+// The general idea:
+// Construct a hash function f for L, f: vector&lt;string&gt; -&gt; int, 
+// Then use the return value of f to check whether a substring is a concatenation 
+// of all words in L.
+// f has two levels, the first level is a hash function f1 for every single word in L.
+// f1 : string -&gt; double
+// So with f1, L is converted into a vector of float numbers
+// Then another hash function f2 is defined to convert a vector of doubles into a single int.
+// Finally f(L) := f2(f1(L))
+// To obtain lower complexity, we require f1 and f2 can be computed through moving window.
+// The following corner case also needs to be considered:
+// f2(f1(["ab", "cd"])) != f2(f1(["ac", "bd"]))
+// There are many possible options for f2 and f1. 
+// The following code only shows one possibility (probably not the best), 
+// f2 is the function "hash" in the class,
+// f1([a1, a2, ... , an]) := int( decimal_part(log(a1) + log(a2) + ... + log(an)) * 1000000000 )
+public:
+    // The complexity of this function is O(nW).
+    double hash(double f, double code[], string &amp;word) {
+        double result = 0.;
+        for (auto &amp;c : word) result = result * f + code[c];
+        return result;
+    }
+    vector&lt;int&gt; findSubstring(string S, vector&lt;string&gt; &amp;L) {
+        uniform_real_distribution&lt;double&gt; unif(0., 1.);
+        default_random_engine seed;
+        double code[128];
+        for (auto &amp;d : code) d = unif(seed);
+        double f = unif(seed) / 5. + 0.8;
+        double value = 0;
+
+        // The complexity of the following for loop is O(L.size( ) * nW).
+        for (auto &amp;str : L) value += log(hash(f, code, str));
+
+        int unit = 1e9;
+        int key = (value-floor(value))*unit;
+        int nS = S.size(), nL = L.size(), nW = L[0].size();
+        double fn = pow(f, nW-1.);
+        vector&lt;int&gt; result;
+        if (nS &lt; nW) return result;
+        vector&lt;double&gt; values(nS-nW+1);
+        string word(S.begin(), S.begin()+nW);
+        values[0] = hash(f, code, word);
+
+        // Use a moving window to hash every word with length nW in S to a float number, 
+        // which is stored in vector values[]
+        // The complexity of this step is O(nS).
+        for (int i=1; i&lt;=nS-nW; ++i) values[i] = (values[i-1] - code[S[i-1]]*fn)*f + code[S[i+nW-1]];
+
+        // This for loop will run nW times, each iteration has a complexity O(nS/nW)
+        // So the overall complexity is O(nW * (nS / nW)) = O(nS)
+        for (int i=0; i&lt;nW; ++i) {
+            int j0=i, j1=i, k=0;
+            double sum = 0.;
+
+            // Use a moving window to hash every L.size() continuous words with length nW in S.
+            // This while loop will terminate within nS/nW iterations since the increasement of j1 is nW,
+            // So the complexity of this while loop is O(nS / nW).
+            while(j1&lt;=nS-nW) {
+                sum += log(values[j1]);
+                ++k;
+                j1 += nW;
+                if (k==nL) {
+                    int key1 = (sum-floor(sum)) * unit;
+                    if (key1==key) result.push_back(j0);
+                    sum -= log(values[j0]);
+                    --k;
+                    j0 += nW;
+                }
+            }
+        }
+        return result;
+    }
+};
+</code></pre>
+
+<p>Though theoretically it has a very small chance to fail.</p>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/jiajingfei">jiajingfei</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/22289/my-ac-c-code-o-n-complexity-26ms">here</a></div></div><div style="page-break-before:always;" class="card"><h2 class="card-title">Solution 3</h2><div class="answer card-content"><div class="entry-content"><p>The following python code is accepted by OJ. It is based on the following idea (assumption)</p>
+
+<ul>
+<li>We know that two multisets consist of same elements and size of the multisets are equal. if sum of hashes of all elements are the same for these multisets -&gt;  those multisets are identical</li>
+</ul>
+
+<p>This is not true for same very very rare cases. Please describe such a case.</p>
+
+<pre><code>def findSubstring(self, S, L):
+    n = len(L) #num words
+    w = len(L[0])  #length of each word
+    t = n*w    # total length
+
+    hashsum = sum([hash(x) for x in L])
+    h = [hash(S[i:i+w])*(S[i:i+w] in L) for i in xrange(len(S)-w+1)]
+    return [i for i in xrange(len(S)-t+1) if sum(h[i:i+t:w])==hashsum]
+</code></pre>
+</div>
+												</div><div class="author"><span>written by&nbsp;</span><a href="https://leetcode.com/discuss/user/hebele">hebele</a><span>&nbsp;original link&nbsp;</span><a href="https://leetcode.com/discuss/10063/hash-idea-and-exception-case">here</a></div></div></article></div></div><footer class="footer"><div class="container"><span>From <a href="https://itunes.apple.com/ca/app/leetcoder/id1069760709?mt=8" target='_blank'>Leetcoder</a>.</span></div></footer></body></html>
